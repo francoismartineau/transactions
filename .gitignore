@@ -1,7 +1,6 @@
 # -- confidential --
 .env
 *.pdf
-pdf/
 credentials*
 service-account-key*
 data/categories.json
