@@ -1,0 +1,24 @@
+# -- confidential --
+.env
+*.pdf
+pdf/
+credentials*
+service-account-key*
+data/categories.json
+# --
+
+
+# -- folders --
+venv/
+__pycache__/
+ahk/
+# --
+
+
+# --
+*copy.*
+*backup.*
+test*
+*notes.txt
+*.png
+# --

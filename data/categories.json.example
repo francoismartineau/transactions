@@ -1,0 +1,14 @@
+{
+  "categories_str": {
+    "FOOD": "Épicerie",
+    "HEALTH": "Santé"
+  },
+  "sample_categories": {
+    "super c": "FOOD",
+    "maxi": "FOOD",
+    "IGA": "FOOD",
+    "dentiste": "HEALTH",
+    "pharmacie": "HEALTH"
+  }
+}
+  
