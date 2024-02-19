@@ -2,8 +2,6 @@ import glob
 import os
 import time as time_module
 import categories
-from dotenv import load_dotenv
-load_dotenv()
 
 def get_documents(subfolder):
     PDF_FOLDER = os.getenv("PDF_FOLDER")
@@ -27,3 +25,4 @@ def print_row(row):
     if category == "?":
         shop = row.get("shop", "")
         print(f'shop: {shop}')
+

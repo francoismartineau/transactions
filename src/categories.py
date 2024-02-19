@@ -19,7 +19,7 @@ def category_to_str(category):
 
 def get_category(shop, price=0):
 	if price < 0:
-		return Categories.UNKNOWN
+		return "DEPOSIT"
 	if not shop.strip():
 		return Categories.UNKNOWN
 	sample_categories = get_config().get("sample_categories", {})

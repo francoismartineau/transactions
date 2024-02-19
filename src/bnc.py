@@ -5,7 +5,8 @@ import sheets
 import categories
 import ocr
 from ocr import TableExceededException
-
+from dotenv import load_dotenv
+load_dotenv()
 
 # -- Globals ----------------------------------------------
 RATIO = 8   # greater means more pixels (slower / more precise)

@@ -8,7 +8,15 @@ Pdf files can be difficult to parse. Depending on the document, extracting text 
 - Set the .env.example values and remove ".example"
 - Configure data/categories.json.example and remove ".example"
 - Set a Google Sheets Api service account and place service-account-key.json at the root
-- Put your bankstatements in pdf/
+- Put your bank statements in pdf/
+- python src/main.py
+
+To design categories:
+- .env: UPLOAD=0
+- run program and use unrecognized transactions to fill data/categories.json
+- then, set UPLOAD=1 and run again
+
+
 
 ##### Supported statements:
 - National Bank

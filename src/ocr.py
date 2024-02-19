@@ -2,10 +2,14 @@ import fitz
 import os
 import sys
 from PIL import Image
+import pytesseract
 from dotenv import load_dotenv
 load_dotenv()
-import pytesseract
-pytesseract.pytesseract.tesseract_cmd = os.getenv("TESSERACT_PATH")
+
+TESSERACT_PATH = os.path.normpath(os.getenv("TESSERACT_PATH"))
+if not os.path.exists(TESSERACT_PATH):
+    raise FileNotFoundError(f"The tesseract path provided: \"{TESSERACT_PATH}\" doesn't exist.")
+pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
 # -- Exception --
 class TableExceededException(Exception):

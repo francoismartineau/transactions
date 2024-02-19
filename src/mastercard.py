@@ -157,6 +157,7 @@ def main():
     rows = []
     for path in paths:
         rows += get_rows(path)
+        break
     sheets.upload_rows(reversed(rows))
 
 if __name__ == '__main__':

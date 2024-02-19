@@ -5,6 +5,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from dotenv import load_dotenv
+load_dotenv()
 from categories import Categories, category_to_str
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
@@ -53,16 +54,16 @@ class SheetsApi:
 	def connect(func):
 		@wraps(func)
 		def wrapper(cls, *args, **kwargs):
-			if not cls.service or not cls.spreadsheets:
-				try:
+			try:
+				if not cls.service or not cls.spreadsheets:
 					key_file = "service-account-key.json"
 					credentials = service_account.Credentials.from_service_account_file(key_file, scopes=SCOPES)
 					cls.service = build("sheets", "v4", credentials=credentials)
 					cls.spreadsheets = cls.service.spreadsheets()
 					cls.spreadsheet_id = os.getenv("SPREADSHEET_ID")
-					return func(cls, *args, **kwargs)
-				except HttpError as error:
-					print(f"An error occurred: {error}")
+				return func(cls, *args, **kwargs)
+			except HttpError as error:
+				print(f"An error occurred: {error}")
 		return wrapper
 
 	# -- sheets ----
@@ -103,7 +104,7 @@ class SheetsApi:
 	@connect
 	def get_sheet_id(cls, sheet_name):
 		sheets = cls.get_sheets()
-		for id, name in sheets:
+		for id, name in sheets.items():
 			if sheet_name == name:
 				return id
 	# ----
@@ -124,8 +125,8 @@ class SheetsApi:
 
 	@classmethod
 	@connect
-	def clear_row(cls, spreadsheet_id, sheet_name, y):
-		cls.spreadsheets.values().update(spreadsheetId=spreadsheet_id, range=f"{sheet_name}!{y}:{y}", valueInputOption="USER_ENTERED", 
+	def clear_row(cls, sheet_name, y):
+		cls.spreadsheets.values().update(spreadsheetId=cls.spreadsheet_id, range=f"{sheet_name}!{y}:{y}", valueInputOption="USER_ENTERED", 
 						body={"values": [["" for _ in range(20)]]}).execute()	
 
 	@staticmethod
@@ -139,16 +140,17 @@ class SheetsApi:
 	# vals: [[]]
 	@classmethod
 	@connect
-	def set_values(cls, spreadsheet_id, sheet_name, x, y, vals):
+	def set_values(cls, sheet_name, x, y, vals):
+		print("HERE")
 		col = cls.translate_col(x)
 		row = y
-		cls.spreadsheets.values().update(spreadsheetId=spreadsheet_id, range=f"{sheet_name}!{col}{row}", valueInputOption="USER_ENTERED", 
-						body={"values": vals}).execute()	
+		cls.spreadsheets.values().update(spreadsheetId=cls.spreadsheet_id, range=f"{sheet_name}!{col}{row}", valueInputOption="USER_ENTERED", 
+						body={"values": vals}).execute()
 
 	# return: [[]]
 	@classmethod
 	@connect
-	def read_values(cls, spreadsheet_id, sheet_name, selection):
+	def read_values(cls, sheet_name, selection):
 		def get_type(s):
 			try:
 				float(s)
@@ -159,7 +161,7 @@ class SheetsApi:
 					return int
 				else:
 					return float	
-		result = cls.spreadsheets.values().get(spreadsheetId=spreadsheet_id, range=f"{sheet_name}!{selection}").execute()
+		result = cls.spreadsheets.values().get(spreadsheetId=cls.spreadsheet_id, range=f"{sheet_name}!{selection}").execute()
 		values = result.get("values", [])
 		for y, row in enumerate(values):
 			for x, val in enumerate(row):
@@ -167,5 +169,5 @@ class SheetsApi:
 		return values
 
 if __name__ == "__main__":
-	sheets = SheetsApi.insert_sheet("test")
-	print(sheets)
+	rows = [['0023-01-12', 'Épicerie', '231,63'], ['0023-01-11', 'Épicerie', '13,29'], ['0023-01-10', 'Transport', '59,00'], ['0023-01-09', 'Essence', '52,05'], ['0023-01-05', 'Magasin à grande surface', '5,55'], ['0023-01-04', 'Santé', '35,10'], ['0023-01-02', 'Épicerie', '215,03'], ['0023-12-29', 'Divertissement', '6,54'], ['0023-12-29', 'Impôts', '30,99'], ['0023-12-25', 'Essence', '42,94'], ['0023-12-23', 'Épicerie', '63,93'], ['0023-12-22', 'Divertissement', '31,45'], ['0023-12-22', 'Magasin à grande surface', '96,27'], ['0023-12-21', 'Cell', '56,47'], ['0023-12-20', 'Vêtements', '44,81'], ['0023-12-20', 'Épicerie', '6,84'], ['0023-12-20', 'Épicerie', '37,65'], ['0023-12-18', 'Restaurant', '17,04'], ['0023-12-18', 'Épicerie', '229,58'], ['0023-12-18', 'Essence', '25,33'], ['0023-12-17', 'Divertissement', '18,96'], ['0023-12-16', 'Restaurant', '23,78'], ['0023-12-16', 'Divertissement', '9,44'], ['0023-12-16', 'Divertissement', '18,89'], ['0023-12-15', 'Restaurant', '40,00'], ['0023-12-14', 'Dépôt', '-90,00']]
+	upload_rows(rows)
